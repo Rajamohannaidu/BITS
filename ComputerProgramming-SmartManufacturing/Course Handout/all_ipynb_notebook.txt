@@ -1,0 +1,1602 @@
+Class 01 Introduction/BasicProgramming.ipynb
+
+
+motor_temp = 85.5
+is_running = True #Boolean (True or False)
+machine_name = "Lathe-01"  ## strings always enclosed in ""
+
+print(f"Machine: {machine_name}, Temperature: {motor_temp}")
+
+
+motor_temp = 95
+if motor_temp>90:  ## its checking if value in motor_temp variable is greater than 90 or not. If yes, program will go inside it.
+  print("Warning : Overheating !") ## We are using indentation (i.e. Usage of Tab or 4 spaces)
+else:
+  print("Temperature Normal :)")
+  
+
+
+sensor_temp = 80
+while sensor_temp<90:
+  print(f"Temperature is OK: {sensor_temp}")
+  sensor_temp = sensor_temp + 2
+  
+  
+
+sensor_readings  = [82, 85, 88, 92, 89, 94]
+
+for temp in sensor_readings:
+  if temp>90:
+    print(f"ALERT ! High Temperature : {temp}")
+  else:
+    print(f"Temperature OK: {temp}")
+	
+	
+import time
+
+for i in range(5):
+  temp = 75 + i*3 ## simulation
+  timestamp = time.strftime("%H:%M:%S")
+  print(f"{timestamp} | Temperature: {temp}")
+  time.sleep(2)
+  
+
+machines = [
+    {"name":"Drill-01","Status":"Running"}, ## dictionary (Key value pairs)
+    {"name":"Lathe-02","Status":"Idle"},
+    {"name":"Milling-03","Status":"Error"}
+]
+
+for machine in machines:
+  print(f"{machine['name']} is currently {machine['Status']}")
+  
+  
+import pandas as pd
+from datetime import datetime
+import uuid
+
+batch_data = []
+
+for i in range(5):
+  temp_data_dict = {
+      "BATCH ID":str(uuid.uuid4()),
+      "Machine Name": f"Machine - {i+1}",
+      "Start Time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+  }
+  batch_data.append(temp_data_dict)
+  
+  
+
+Class 02 - Simulation Visualization/Programming class 02.ipynb
+
+## all of temp in degree celsius
+min_temp = 40
+max_temp = 110
+threshold_temp = 90
+
+## intialize data logs
+timestamps = []
+temperatures  = []
+cooling_status = []
+
+
+
+def add_two_number(a,b):
+  ## function body
+  sum_of_two_number = a+b
+  return sum_of_two_number
+  
+ 
+def simulate_temperature():
+  return random.uniform(min_temp, max_temp)
+  
+
+
+for i in range(30):
+  current_time = i
+  temp = simulate_temperature()
+
+  if temp>threshold_temp:
+    cooling="ON"
+  else:
+    cooling="OFF"
+
+  temperatures.append(temp)
+  timestamps.append(current_time)
+  cooling_status.append(cooling)
+
+
+  print(f"Time {current_time}s | Temp: {temp:.2f}°C | Cooling: {cooling}")
+
+  time.sleep(2)
+  
+
+plt.figure(figsize=(10,5))
+plt.plot(timestamps, temperatures, label = "Motor Temp (°C)", color="orange")
+plt.axhline(y=threshold_temp, color='red',linestyle='--',label='Cooling threshold')
+
+cooling_times = []
+for t,c in zip(timestamps,cooling_status):
+  if c=="ON":
+    cooling_times.append(t)
+
+cooling_temp = []
+for temp,c in zip(temperatures,cooling_status):
+  if c == "ON":
+    cooling_temp.append(temp)
+
+plt.scatter(cooling_times,cooling_temp,color='blue',label="Cooling ON")
+plt.xlabel('Time unit')
+
+plt.ylabel('Temperature')
+
+plt.title('Motor temperature monitoring')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+
+time_steps = 100
+production_data = {
+    'Time':np.arange(time_steps),
+    'Units Produced': np.random.randint(80,120,size=time_steps),
+    'Defective Units': np.random.randint(0,10,size=time_steps)
+}
+
+
+
+from pprint import pprint
+pprint(production_data)
+
+df = pd.DataFrame(production_data)
+
+
+df['Yield'] = df['Units Produced'] - df['Defective Units']
+df['Efficency'] = (df['Yield']/df['Units Produced'])*100
+
+
+df['Predictive Yield'] = df['Yield'].rolling(window=10).mean()
+df.head(20)
+
+
+
+plt.figure(figsize=(12,6))
+# Plot actual yield
+plt.plot(df['Time'], df['Yield'], label='Actual Yield', marker='o')
+
+# Plot predicted yield
+plt.plot(df['Time'], df['Predicted_Yield'], label='Predicted Yield', linestyle='--')
+
+plt.bar(df['Time'],df['Defective Units'],color='red',label='Defective Units')
+
+plt.title('Digital twin: Production Line Performance')
+plt.xlabel('Time')
+plt.ylabel('Units')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Simulate real-time production data
+np.random.seed(42)  # For reproducibility
+time_steps = 100
+production_data = {
+    'Time': np.arange(time_steps),
+    'Units_Produced': np.random.randint(80, 120, size=time_steps),
+    'Defective_Units': np.random.randint(0, 10, size=time_steps)
+}
+
+# Create a DataFrame
+df = pd.DataFrame(production_data)
+
+# Calculate yield and efficiency
+df['Yield'] = df['Units_Produced'] - df['Defective_Units']
+df['Efficiency'] = (df['Yield'] / df['Units_Produced']) * 100
+
+# Digital Twin: Predict future performance using a simple moving average
+window_size = 10
+df['Predicted_Yield'] = df['Yield'].rolling(window=window_size).mean()
+
+# Plot the data
+plt.figure(figsize=(12, 6))
+
+# Plot actual yield
+plt.plot(df['Time'], df['Yield'], label='Actual Yield', marker='o')
+
+# Plot predicted yield
+plt.plot(df['Time'], df['Predicted_Yield'], label='Predicted Yield', linestyle='--')
+
+# Highlight defective units
+plt.bar(df['Time'], df['Defective_Units'], color='red', alpha=0.3, label='Defective Units')
+
+# Add labels and legend
+plt.title('Digital Twin: Production Line Performance')
+plt.xlabel('Time')
+plt.ylabel('Units')
+plt.legend()
+plt.xticks(rotation=45)
+plt.tight_layout()
+
+# Show the plot
+plt.show()
+
+
+#### Data Analysis
+
+import pandas as pd
+
+# Load production data
+data = {
+    'Machine': ['A', 'B', 'C', 'A', 'B', 'C'],
+    'Output': [100, 150, 200, 110, 160, 210],
+    'Defects': [5, 3, 2, 4, 2, 1]
+}
+
+df = pd.DataFrame(data)
+display(df)
+
+
+# Calculate total output and defects per machine
+summary = df.groupby('Machine').sum()
+summary['Defect Rate'] = (summary['Defects'] / summary['Output']) * 100
+
+print(summary)
+
+### Interactive graph
+
+import plotly.express as px
+
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Simulate real-time production data
+np.random.seed(42)  # For reproducibility
+time_steps = 100
+production_data = {
+    'Time': np.arange(time_steps),
+    'Units_Produced': np.random.randint(80, 120, size=time_steps),
+    'Defective_Units': np.random.randint(0, 10, size=time_steps)
+}
+
+# Create a DataFrame
+df = pd.DataFrame(production_data)
+
+# Calculate yield and efficiency
+df['Yield'] = df['Units_Produced'] - df['Defective_Units']
+df['Efficiency'] = (df['Yield'] / df['Units_Produced']) * 100
+
+# Digital Twin: Predict future performance using a simple moving average
+window_size = 10
+df['Predicted_Yield'] = df['Yield'].rolling(window=window_size).mean()
+     
+
+import plotly.express as px
+import plotly.graph_objects as go
+     
+
+fig = go.Figure()
+     
+
+fig.add_trace(go.Scatter(x = df['Time'],y=df['Yield'],mode = 'lines+markers',name='Actual Yield'))
+fig.add_trace(go.Scatter(x = df['Time'],y=df['Predicted_Yield'],mode = 'lines',name='Predicted Yield', line=dict(dash='dash')))
+
+fig.add_trace(go.Bar(x = df['Time'],y=df['Defective_Units'],name='Defective Units', marker=dict(color='red')))
+
+fig.update_layout(
+    title = 'Digital twin: Production line performance',
+    xaxis_title = 'Time',
+    yaxis_title = 'Units'
+)
+
+fig.show()
+
+
+### V-Look Up
+     
+
+products = pd.DataFrame({'ProductID':[101,102,103],
+                         'ProductName':['Widget','Gadget','xyshvd']})
+
+prices = pd.DataFrame({'ProductID':[101,102,103],
+                       'Price':[19.99,23.50,76.88]})
+     
+
+merged_data  = pd.merge(products,prices,on='ProductID',how='left')
+     
+
+display(merged_data)
+
+
+
+/Class 03 - Theory/Basics_Theory.ipynb
+
+
+
+# * What is Programming ?  --> Tool to instruct machines to perform task.
+# Bridge b/w human logic and machine execution.
+
+# Natural Lnaguage --- Humans
+# Programming language -- Machines
+
+# ** Many Languages
+
+# Python -- Data Processing, Automation, ML, Analytucs, Dashboarding, IoT
+
+# C/C++ -- Hardware control, Embedded systems
+
+# Java -- Enterprise systems, ERP integerations
+
+# SQL -- Data retrievals, storage of data
+
+# ** Type of PL
+
+#   --> High- Level --> Python, Java, C#  (Human Friendly)
+#   --> Low-Level --> Closer to machine code (Assembly, C)
+#   --> Object - Oriented -- C++, Python, Java
+
+# ** How you will do programming ?
+
+# 1) Google Colab -- No installation, No hardware required. Only interent and gmail account needed
+
+# 2) On your computer -- python install, complex/computation intensive operations --> need good RAM,CPU, GPU. No internet required as such if you're
+#  not installing any library untill/unless your library needs internet/API call
+
+     
+
+# from typing import ValuesView
+
+# ** common concepts around Programming**
+
+# 1) Variable -- store data
+# what data you store -- tells , how you should store it..
+
+# 2) Keywords -- some pre-defined functions or tools or utilities.., if, for, in, type
+
+# 3) DataTypes
+# Primitive/Fundamental/Basic DataTypes
+#   * int -- Integer, behave and support Arithmetic operations
+#   * float -- Integer with floating values
+#   * str -- String, just like some combination of characters (whatever you see on keyboard)
+
+# **Complex/Advanced DataTypes**
+
+# Example - Instead of one temperature value, you want to store multiple temp. values
+
+# * list -- store multiple Values
+#   How to access/use list --
+#   1) len -- length of list, how many values are present in it
+#   2) if you want to access say 1st value ,, l[0]  -> in programming , everything starts from 0. 1 in real world is 0 in programming.
+#   3) Slicing -- access multiple values from list in single go
+#   4) scroll through list in automated manner -- USAGE of LOOP
+
+# * Dictionary -- key/value mappping pair ..
+
+     
+
+for machine, what all info you Store
+
+* machine ID
+* machine parameters -- temp, pressure, vaccum
+* results -- actual values
+     
+
+temp1 = [10.9,22.4,33.5,44.6]
+     
+
+temp1.append(40.88)
+     
+
+temp1
+     
+[10.9, 22.4, 33.5, 44.6, 40.88]
+
+variable (int,float)  --> multiple values --> list  --> multiple lists --> dictionaries..
+     
+
+machine_data = {
+    "m1": {
+        "temperature":[],
+        "pressure":[]
+    },
+    "m2":{
+        "temperature":[],
+        "pressure":[]
+    },
+    "m3":{
+        "temperature":[],
+        "pressure":[]
+    },
+    "m4":{
+        "temperature":[],
+        "pressure":[]
+    },
+    "m5":{
+        "temperature":[],
+        "pressure":[]
+    }
+}
+     
+
+import random
+machine_names = list(machine_data.keys())
+print(machine_names)
+machine_features = list(machine_data["m1"].keys())
+print(machine_features)
+     
+['m1', 'm2', 'm3', 'm4', 'm5']
+['temperature', 'pressure']
+
+### Basic Simulation
+     
+
+machine_data
+     
+{'m1': {'temperature': '23.75', 'pressure': 17.6},
+ 'm2': {'temperature': 21.34, 'pressure': 18.8},
+ 'm3': {'temperature': 11.5, 'pressure': []},
+ 'm4': {'temperature': [], 'pressure': 17.3},
+ 'm5': {'temperature': [], 'pressure': []}}
+
+machine_data[machine_name][feature_name]
+     
+21.34
+
+for i in range(20):
+  machine_name = random.choice(machine_names)
+  feature_name = random.choice(machine_features)
+  value = float(input(f"Enter {feature_name} for Machine: {machine_name} "))
+  machine_data[machine_name][feature_name].append(value)
+     
+
+from pprint import pprint
+pprint(machine_data)
+     
+{'m1': {'pressure': [], 'temperature': [22.5]},
+ 'm2': {'pressure': [998.44, 87.0, 88.3, 44.1, 55.6],
+        'temperature': [22.7, 99.0, 33.4]},
+ 'm3': {'pressure': [77.8], 'temperature': [22.4, 22.8, 22.2]},
+ 'm4': {'pressure': [22.6, 99.6], 'temperature': [110.2]},
+ 'm5': {'pressure': [887.0], 'temperature': [22.3, 33.4, 55.7]}}
+
+machine_data["m2"]["pressure"]
+     
+[998.44, 87.0, 88.3, 44.1, 55.6]
+
+machine_data = {
+    "m1": [10.9,22.4,33.5,44.6],
+    "m2":[111,22,3,4],
+    "m3":[32563,2783,373,277],
+    "m4":[11,233,45,666],
+    "m5":[6,99,8]
+}
+     
+
+machine_data["m6"]
+     
+---------------------------------------------------------------------------
+KeyError                                  Traceback (most recent call last)
+<ipython-input-56-0d0266dd07fa> in <cell line: 0>()
+----> 1 machine_data["m6"]
+
+KeyError: 'm6'
+
+2 Machines
+
+M1 -- temp_value_m1 = [10.9,22.4,33.5,44.6]
+
+M2 -- temp_values_m2 = [10.7,333.8,77.4,3.2]
+
+temp_values_m3
+
+temp_values_m4
+
+temp_values_m1000
+     
+
+# devices
+employees = ["A","B","C","D","E","F","G"]
+     
+
+pressure, flow, vibration, velocity, conductivity, etc..
+     
+
+temp1 = 36.5
+temp2 = 50.9
+temp3 = 88
+temp4 = 7
+temp5 = 99.9
+
+print(f'''Temp1 type -  {type(temp1)}
+Temp2 type - {type(temp2)}
+Temp3 type - {type(temp3)}
+Temp4 type - {type(temp4)}
+Temp5 type - {type(temp5)}''')
+
+temp_values = [temp1,temp2,temp3, temp4, temp5]
+print(f"Type of temp_values -- {type(temp_values)}")
+     
+Temp1 type -  <class 'float'>
+Temp2 type - <class 'float'>
+Temp3 type - <class 'int'>
+Temp4 type - <class 'int'>
+Temp5 type - <class 'float'>
+Type of temp_values -- <class 'list'>
+
+for temp in temp_values:
+  if temp> 30:
+    print(temp)
+     
+36.5
+50.9
+88
+99.9
+
+temp_values[1:3]
+     
+[50.9, 88]
+
+# [36.5, 50.9,88,7,99.9] ---> Actual Values
+
+# [0,1,2,3,4]  --> Index
+     
+
+temp_values[2]
+     
+88
+
+type(temp_values)
+     
+list
+
+type(temp_values[2])
+     
+int
+
+temp_values = [36.5, 50.9,88,7,99.9]
+type(temp_values)
+     
+list
+
+temp_values[0],temp_values[1],temp_values[2]
+     
+(36.5, 50.9, 88)
+
+len(temp_values)
+     
+5
+
+temperature = 36.5
+     
+
+type(temperature)
+     
+float
+
+a=10.0
+type(a)
+     
+float
+
+a+30
+     
+40.0
+
+a = 10
+print(type(a))
+     
+<class 'int'>
+
+a+30
+     
+40
+
+a = "10"
+print(type(a))
+     
+<class 'str'>
+
+a = "name"
+     
+
+a+30
+     
+---------------------------------------------------------------------------
+TypeError                                 Traceback (most recent call last)
+<ipython-input-12-59e4df352fac> in <cell line: 0>()
+----> 1 a+30
+
+TypeError: can only concatenate str (not "int") to str
+
+name = "aakash"
+     
+
+print(f"My name is {name}")
+     
+My name is aakash
+
+
+Class 04 - ItertionLoop/Iteartion_Loop.ipynb
+
+
+
+# for, while -- iteration over list
+     
+
+Why loops matter ?  -- to enable scaling, we do looping/iteartion
+
+What is a loop ? --- way to repeat block of code automatically
+  A) fixed number of times  --->
+  B) untill a condition is met
+
+Motivations
+  A) Sensor Monitoring : repeatedly ..
+  B) Batch operation: run same process multiple times
+  C) RTS: Loop through status updates
+  D) Data Logging: Log values every second or every cycle
+     
+
+sensor_data = [78,82,91,88,95]
+
+## keywords --> for, in
+'''
+for  in : (colon)
+  #(Press tab) --> Indentation 1 TAB == 4 spaces (press space bar 4 times == 1 TAB)
+  ### SOME CODE HERE
+'''
+     
+
+95>90
+     
+True
+
+sensor_data = [78,82,91,88,95]
+
+for temp in sensor_data:
+  # print(f"Temperature is {temp}")
+  if temp > 90:
+    print(f"ALERT!! High Temperature - {temp}")
+  else:
+    print(f"OK: {temp}")
+     
+OK: 78
+OK: 82
+ALERT!! High Temperature - 91
+OK: 88
+ALERT!! High Temperature - 95
+
+## Machine Health Status
+     
+
+l1 = [10,1111,99,23,484,3]
+l2 = [20,90,30,40,50,60]
+
+## zip keyword -- help to unpack values from multiple iterations. only condition, is size of both list should be same.
+
+for value1,value2 in zip(l1,l2):
+  print(value1,value2)
+     
+10 20
+1111 90
+99 30
+23 40
+484 50
+3 60
+
+machines = ["M1","M2","M3","M4"]
+status = ["OK","OK","MAINTENANCE","OK"]
+
+for machine_name,machine_status in zip(machines,status):
+  print(f"Machine Name: {machine_name}, Machine Status: {machine_status}")
+     
+Machine Name: M1, Machine Status: OK
+Machine Name: M2, Machine Status: OK
+Machine Name: M3, Machine Status: MAINTENANCE
+Machine Name: M4, Machine Status: OK
+
+machine_status = {
+    "M1":"OK",
+    "M2":"OK",
+    "M3":"MAINTENANCE",
+    "M4":"OK"
+}
+
+machine_status.items()
+     
+dict_items([('M1', 'OK'), ('M2', 'OK'), ('M3', 'MAINTENANCE'), ('M4', 'OK')])
+
+for machine_name, machine_status in machine_status.items():
+  print(f"Machine Name: {machine_name}, Machine Status: {machine_status}")
+     
+Machine Name: M1, Machine Status: OK
+Machine Name: M2, Machine Status: OK
+Machine Name: M3, Machine Status: MAINTENANCE
+Machine Name: M4, Machine Status: OK
+
+### Count Defective Items
+     
+
+defect_counts = [0,2,11,0,3]
+
+total_defects = 0
+
+for d in defect_counts:
+  # print(d)
+  total_defects = total_defects + d
+  print(f"Defect count is {d}, Total defect : {total_defects}")
+     
+Defect count is 0, Total defect : 0
+Defect count is 2, Total defect : 2
+Defect count is 11, Total defect : 13
+Defect count is 0, Total defect : 13
+Defect count is 3, Total defect : 16
+
+min(defect_counts)
+     
+0
+
+max(defect_counts)
+     
+11
+
+sum(defect_counts)
+     
+16
+
+### LIST
+
+# 1) create list --
+
+temps = [72,75,78]
+print(temps)
+
+# 2) Access list element
+print(f"1st index: {temps[1]}")
+
+# 3) Change Item
+temps[1] = 80
+print(f"New value on 1st index: {temps[1]}")
+
+# 4) Loop
+
+for t in temps:
+  print(t)
+
+# 5) Some functions
+
+## no of elements
+no_of_elements = len(temps)
+min_value = min(temps)
+max_value = max(temps)
+sum_value = sum(temps)
+## arrange values in ascending/descending order
+sorted_temps = sorted(temps)
+
+print(f'''1. No of Elements: {no_of_elements}
+2. Minimum Value: {min_value}
+3. Maximum Value: {max_value}
+4. Total sum: {sum_value}
+5. Sorted List: {sorted_temps}''')
+     
+[72, 75, 78]
+1st index: 75
+New value on 1st index: 80
+72
+80
+78
+1. No of Elements: 3
+2. Minimum Value: 72
+3. Maximum Value: 80
+4. Total sum: 230
+5. Sorted List: [72, 78, 80]
+
+## another function - range
+     
+
+list(range(10))
+     
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+list(range(11))
+     
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+list(range(2,11))
+     
+[2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+list(range(2,12,3))
+     
+[2, 5, 8, 11]
+
+range(start, end, jump)
+     
+
+### Iterate over 0 to 10
+
+for i in range(0,10):
+  print(i)
+     
+for i in range(1,11):
+  print(f"Machine {i}")
+     
+
+machine_names= []
+
+for i in range(1,101):
+  mname = f"Machine {i}"
+  machine_names.append(mname)
+     
+
+print(machine_names)
+     
+Pretty printing has been turned OFF
+
+# untill a condition is met
+     
+
+100<100
+     
+False
+
+import time
+water_level = 60
+max_capacity = 100
+
+## condition -- water_level < max_capacity
+# As the condition False or break, while loop stops..
+
+while water_level < max_capacity:
+  print(f"Water Level is {water_level}%. Filling in progress...")
+  water_level= water_level + 10
+  time.sleep(2)
+  ##
+  if water_level == 90:
+    pass
+
+print(f"Water level reached: {water_level}%. Stop Filling.")
+     
+Water Level is 60%. Filling in progress...
+Water Level is 70%. Filling in progress...
+Water Level is 80%. Filling in progress...
+Water Level is 90%. Filling in progress...
+Water level reached: 100%. Stop Filling.
+
+## Simulation
+     
+
+name = "aakash"
+# print(f"My name is {name}")
+print(f"My name is {name}")
+     
+My name is aakash
+
+import time
+water_level = 30
+motor_on = False
+
+while True:
+  print(f"Current Water Level: {water_level}")
+  if water_level < 40 and not motor_on:
+    motor_on = True
+    print("Motor Turned on to fill water tank")
+  elif water_level >=90 and motor_on:
+    motor_on = False
+    print("Motor Turned OFF: Tank is full.")
+  else:
+    print(f"Motor State remains: {'ON' if motor_on else 'OFF'}")
+
+
+  if motor_on:
+    water_level = water_level+10
+  else:
+    water_level = water_level - 5
+
+  time.sleep(1)
+
+  if water_level<=0 or water_level>=100:
+    print("Simulation complete")
+    break
+     
+### Plotting
+     
+
+import pandas as pd
+     
+
+df = pd.read_excel("tank data.xlsx")
+df.shape
+     
+(10, 2)
+
+import matplotlib.pyplot as plt
+     
+
+df.columns
+     
+Index(['timestamp', 'water_level'], dtype='object')
+
+plt.figure(figsize=(10,5))
+plt.plot(df['timestamp'],df['water_level'],color='green')
+plt.title("Water Tank Level over timestamps")
+plt.xlabel("Timestamp")
+plt.ylabel("Water Level")
+plt.grid(True)
+plt.xticks(rotation=45)
+plt.show()
+     
+
+Class 05- Libraries IfElse/Library_coverage.ipynb
+
+
+
+'''
+Content
+  1. Random
+  2. Time
+  3. Datetime
+  4. Function
+  5. If-Else-Elif
+  6. save dataframe into excel
+'''
+     
+
+import sys
+sys.version
+     
+'3.11.12 (main, Apr  9 2025, 08:55:54) [GCC 11.4.0]'
+
+## Random number generation
+'''
+  1. Simulation based tasks - sensor data
+  2. create randominzed values
+'''
+     
+
+import random
+     
+
+## return float between 0 and 1
+random.random()
+     
+0.6491008540621785
+
+## return float between a and b
+
+random.uniform(2,30)
+     
+23.406608167931928
+
+## return an integer between a and b
+
+random.randint(2,30)
+     
+27
+
+## select one item randomly from a list
+
+status = ["Normal","Alert","Maintenance"]
+random.choice(status)
+     
+'Maintenance'
+
+## TIP: To see the help over given code, write "?"
+
+?random.choices
+     
+
+## select k randomly selected items instead of 1
+random.choices(status,k=10)
+     
+['Normal',
+ 'Maintenance',
+ 'Normal',
+ 'Normal',
+ 'Maintenance',
+ 'Alert',
+ 'Normal',
+ 'Normal',
+ 'Alert',
+ 'Maintenance']
+
+## give say more weightage to Normal
+status = ["Normal","Alert","Maintenance"]
+weights = [0.7,0.2,0.1]
+
+random.choices(status,weights=weights,k=10)
+     
+
+
+names = ["Aakash","Amit","Karthikeya","Shine"]
+print(names)
+     
+['Aakash', 'Amit', 'Karthikeya', 'Shine']
+
+## shuffling -- randomly reorder elements of a list
+names = ["Aakash","Amit","Karthikeya","Shine","Sandeep","Chinmay","Kiran"]
+random.shuffle(names)
+print(names)
+     
+['Amit', 'Shine', 'Kiran', 'Sandeep', 'Aakash', 'Chinmay', 'Karthikeya']
+
+print(random.uniform(2,30))
+     
+23.331191814056687
+
+## fix the random behavior -- important for consistent simulation
+
+random.seed(42)
+print(random.uniform(2,30))
+     
+19.903950356820744
+
+## Time, DateTime
+     
+
+import time
+print(time.time()) ## returns the current time in seconds since the 1-Jan-1970
+     
+1748767067.8538308
+
+## pause execution for given number of seconds
+print("Hi")
+time.sleep(2)
+print("How are you ?")
+     
+Hi
+How are you ?
+
+## convert seconds passed to the readable string
+time.ctime(1748767067.8538308)
+     
+'Sun Jun  1 08:37:47 2025'
+
+time.localtime()
+     
+time.struct_time(tm_year=2025, tm_mon=6, tm_mday=1, tm_hour=8, tm_min=41, tm_sec=24, tm_wday=6, tm_yday=152, tm_isdst=0)
+
+## format the time
+
+now = time.localtime()
+
+print(time.strftime("%y-%m-%d %H:%M:%S", now))
+print(time.strftime("%Y-%m-%d %H:%M:%S", now))
+     
+25-06-01 08:43:29
+2025-06-01 08:43:29
+
+from datetime import datetime
+now = datetime.now()
+print(now)
+     
+2025-06-01 08:44:39.765225
+
+!pip install pytz
+     
+Requirement already satisfied: pytz in /usr/local/lib/python3.11/dist-packages (2025.2)
+
+import pytz
+     
+
+india_timezone = pytz.timezone('Asia/Kolkata')
+uk_timezone = pytz.timezone('Europe/London')
+utc_now = datetime.now(pytz.utc)
+
+india_time = utc_now.astimezone(india_timezone)
+uk_time = utc_now.astimezone(uk_timezone)
+print(f"Time in India: {india_time} and in UK: {uk_time}")
+     
+Time in India: 2025-06-01 14:18:59.667878+05:30 and in UK: 2025-06-01 09:48:59.667878+01:00
+
+## add or subtract time
+
+from datetime import timedelta
+now = datetime.now()
+
+future = now + timedelta(days=5, hours=2)
+
+print(f"Current time: {now} and Future time: {future}")
+     
+Current time: 2025-06-01 08:52:24.606884 and Future time: 2025-06-06 10:52:24.606884
+
+??dt
+     
+
+
+     
+
+## parse string to Datetime
+
+timestamp = "2025-06-01 18:45:00"
+dt = datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S")
+
+year = dt.year
+month = dt.month
+day = dt.day
+hour = dt.hour
+minute = dt.minute
+second = dt.second
+microsecond = dt.microsecond
+tzinfo = dt.tzinfo
+print(f''' Year: {year}, Month: {month}, Day: {day}, Hour: {hour}
+Minute: {minute}, Second: {second}, TimezoneInfo: {tzinfo}''')
+     
+ Year: 2025, Month: 6, Day: 1, Hour: 18
+Minute: 45, Second: 0, TimezoneInfo: None
+
+## Function
+
+'''
+1. What ? -- Reusable block of code that performs specific task.
+2. Why ? -- Reduce code repetition and improve readability. Write it once and use as many times as needed.
+ Easier to debug and maintain
+ Modular design
+3. Analogy -- Think of function like a machine tools that performs specific operation.
+4. Describe
+  A. def -- keyword
+  B. greet -- Function name
+  C. () -- parenthesis
+    C.1. name -
+  D: : -- colon
+5. Best Practices
+  * Use meaningful function names..
+  * keep one responsibility per function..
+  * Write Comments/docstring..
+'''
+     
+
+def greet(name):
+  print(f"Hi {name}, Welcome to function concept !!")
+     
+
+greet(name = "Sumit")
+     
+Hi Sumit, Welcome to function concept !!
+
+## Function with parameters
+     
+
+def show_temp(machine_name,temp):
+  print(f"Machine {machine_name} has temperature {temp}")
+     
+
+show_temp("CNC",30.4)
+     
+Machine CNC has temperature 30.4
+
+## Function which returns values
+     
+
+def calculate_efficiency(units_produced, units_defective):
+  yield_units = units_produced - units_defective
+  efficency = (yield_units/units_produced)*100
+  return efficency
+     
+
+eff = calculate_efficiency(100,20)
+     
+
+print(eff)
+     
+80.0
+
+## Conditional Logic
+
+'''
+1. To control the flow of program
+2. if, elif, else
+3. Syntax
+  if condition:
+    ## code if condition is True
+  elif another_condition:
+    ## code if this second condition is True
+  else:
+    ## Code if none of the above are True
+'''
+     
+
+## Basic If
+temperature = 45
+if temperature>40:
+  print("Alert: High Temperature!")
+     
+Alert: High Temperature!
+
+## If-Else
+
+temperature = 34
+if temperature>40:
+  print("Alert: High Temperature!")
+else:
+  print("Normal Temperature")
+     
+Normal Temperature
+
+## If-Elif-Else
+
+# temperature=34
+temperature=20
+
+
+if temperature>50:
+  print("Very high temperature")
+elif temperature>=30 and temperature<=50:
+  print("High Temperature")
+else:
+  print("Normal Temperature")
+     
+Normal Temperature
+
+## Multi condition logic with and, or
+     
+
+pressure = 95
+temperature = 45
+
+if pressure>90 and temperature>40:
+  print("Warning: System Overload")
+     
+Warning: System Overload
+
+if pressure>90 or temperature>40:
+  print("System needs attention")
+     
+System needs attention
+
+## Use in function
+     
+
+def check_status(temp,vibration):
+  if temp>70:
+    return "Shutdown due to overheat"
+  elif vibration>8:
+    return "Maintenance Required"
+  else:
+    return "Normal Operation"
+     
+
+check_status(72,7.5)
+     
+'Shutdown due to overheat'
+
+### Nested If condition
+     
+
+def production_check(units, defects):
+  if units>0:
+    defect_rate = (defects/units) * 100
+    if defect_rate > 5:
+      return "High Defect Rate"
+    else:
+      return "Acceptable Quality"
+  else:
+    return "No Production"
+     
+
+production_check(0,7)
+     
+'No Production'
+
+production_check(100,7)
+     
+'High Defect Rate'
+
+## Compact If-Else (one line)
+     
+
+temp = 20
+status = "Hot" if temp>25 else "Cold"
+print(status)
+     
+Cold
+
+## save dataframe into excel
+     
+
+import pandas as pd
+units_produced = [random.randint(80,100) for _ in range(50)]
+defective_units = [random.randint(0,10) for _ in range(50)]
+data = {
+    "Units Produced":units_produced,
+    "Defective Units": defective_units
+}
+
+df = pd.DataFrame(data)
+     
+
+df.to_excel("data.xlsx")
+     
+
+
+Class 06 Numpy/Numpy.ipynb
+
+
+
+'''
+NUMPY  --- foundational Python library, for numerical computing purpose.., smart manufacturing simulations
+WHY ? -- Eseential for working with arrays, performing matrix operations, statistical calculations, simulations..
+
+'''
+     
+
+pip install numpy
+     
+
+import numpy as np
+     
+
+a = np.array([1,2,3,4])
+print(a)
+     
+[1 2 3 4]
+
+b = np.array([[1,2],
+              [3,4]])
+print(b)
+     
+[[1 2]
+ [3 4]]
+
+
+a = np.array([10,20,30])
+b = np.array([1,2,3])
+
+addition = a+b
+multiply = a*b
+
+print(f"Addition: {addition}")
+print(f"Multiplication: {multiply}")
+     
+Addition: [11 22 33]
+Multiplication: [10 40 90]
+
+## Matrix Multiplication
+     
+
+a = np.array([[1,2],
+              [3,4]])
+
+b = np.array([[2,0],
+              [1,3]])
+
+np.dot(a,b)
+     
+array([[ 4,  6],
+       [10, 12]])
+
+
+## create sensor data array
+
+vibration_data = np.array([7.5,8.1,6.9,9.2,10.5])
+
+avg_value = np.mean(vibration_data)
+min_value = np.min(vibration_data)
+max_value = np.max(vibration_data)
+
+print(f"Average Value: {avg_value}, Minimum value: {min_value}, Maximum Value: {max_value}")
+     
+Average Value: 8.440000000000001, Minimum value: 6.9, Maximum Value: 10.5
+
+## Suppose we track machine utilization (%) over a week
+
+util_matrix  = np.array([
+    [70,80,75,60,90],
+    [85,90,88,95,92],
+    [50,60,65,55,70]
+])
+
+avg_util = np.mean(util_matrix,axis=1)
+print(f"Average Utilization per machine: {avg_util}")
+     
+Average Utilization per machine: [75. 90. 60.]
+
+
+## find maximum vibration in any row or column
+
+vibration_matrix = np.array([
+    [2.1,2.4,2.2],
+    [2.3,2.5,2.6],
+    [2.0,2.1,2.3]
+])
+     
+
+overall_max = np.max(vibration_matrix)
+max_row = np.max(vibration_matrix,axis=1)
+max_column = np.max(vibration_matrix,axis=0)
+
+     
+
+print(overall_max)
+     
+2.6
+
+print(max_column)
+     
+[2.3 2.5 2.6]
+
+print(max_row)
+     
+[2.4 2.6 2.3]
+
+## Each sensor has dufferent sensitivity/weight, Multiply reading with weights
+     
+
+sensor_weights = np.array([
+    [1,0.9,1.1],
+    [1.2,1.0,0.95],
+    [1.1,0.8,1.0]
+
+])
+
+print(vibration_matrix*sensor_weights)
+     
+[[2.1  2.16 2.42]
+ [2.76 2.5  2.47]
+ [2.2  1.68 2.3 ]]
+
+## Potential Energy Spring
+     
+
+
+# Potential Energy (U) = 1/2 * k * X^2
+
+# k --> Spring Constant (N/m)
+# x --> Displacement (m)
+     
+
+## Simulate Energy for Different Displacement
+     
+
+x = np.linspace(0,10,50)
+
+print(x)
+     
+
+k = 100 ## spring constant
+x = np.linspace(0,10,50)
+U = 0.5 * k * (x**2)
+print(U)
+     
+import matplotlib.pyplot as plt
+
+plt.plot(x,U, label = 'Potential Energy')
+plt.xlabel("Displacement (m)")
+plt.ylabel("Energy (Joules)")
+plt.title("Sprint Potential Energy")
+plt.grid(True)
+plt.legend()
+plt.show()
+     
+
+
+if np.max(U)>3000:
+  print("Warning: Spring Overload risk!")
+     
+Warning: Spring Overload risk!
+
+## Solve Equations
+     
+
+### Solving Linear Equations: Ax = b
+     
+
+'''
+2x + 3y = 8
+3x + 4y = 11
+'''
+A = np.array([[2,3], [3,4]])
+b = np.array([8,11])
+
+x = np.linalg.solve(A,b)
+print(x)
+print(f"Solution: x = {x[0]}, y = {x[1]}")
+     
+[1. 2.]
+Solution: x = 1.0, y = 2.0
+
+### Solve Non-Linear Equations
+     
+
+def eqn(x):
+  return x**2 - 9
+     
+
+from scipy.optimize import fsolve
+     
+
+?fsolve
+     
+
+sol = fsolve(eqn,1)
+print(f"Solution: {sol[0]}")
+     
+Solution: 2.9999999999999574
+
+### Vectorization vs Loops
+     
+
+## Looping
+arr = [1,2,3,4,5]
+squared = []
+for i in arr:
+  squared.append(i**2)
+print(squared)
+     
+[1, 4, 9, 16, 25]
+
+## vectorization
+arr_np = np.array([1,2,3,4,5])
+squared_np = arr_np**2
+
+print(squared_np)
+     
+[ 1  4  9 16 25]
+
+## real example
+     
+
+temp_celsius = np.array([25,30,40,60])
+
+## ( C*9/5 )+32
+
+temp_fahrenheit = (temp_celsius * 9/5) + 32
+print(temp_fahrenheit)
+     
+[ 77.  86. 104. 140.]
+
+### Exercises
+     
+
+# b = 10
+# a = 5
+
+b = 10
+a = 3
+
+b/a,b%a
+     
+(3.3333333333333335, 1)
+
+'''
+1. Solve system
+
+   4x + y = 20
+  -2x + 3y = -6
+
+2. Vectorize using numpy
+# Modulus (%) -- Used for getting remainder when a/b happens
+
+v = [1,2,3,4]
+result = []
+for i in v:
+  if i%2 == 0:
+    result.append(i*2)
+  else:
+    result.append(i*3)
+'''
+     
+
+v = np.array([1,2,3,4])
+
+result = np.where(v%2 == 0, v * 2, v * 3)
+print(result)
+     
+[3 4 9 8]
+
+A = np.array([
+    [4,1],
+    [-2,3]
+])
+b = np.array([20,-6])
+
+x = np.linalg.solve(A,b)
+print(f"Solution: x = {x[0]}, y = {x[1]}")
+     
+Solution: x = 4.714285714285714, y = 1.1428571428571428
+
